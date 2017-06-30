@@ -14,8 +14,6 @@
 
 package net.openid.appauth;
 
-import static net.openid.appauth.Preconditions.checkNotNull;
-
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -31,7 +29,6 @@ import android.text.TextUtils;
 import net.openid.appauth.AuthorizationException.GeneralErrors;
 import net.openid.appauth.AuthorizationException.RegistrationRequestErrors;
 import net.openid.appauth.AuthorizationException.TokenRequestErrors;
-
 import net.openid.appauth.browser.BrowserDescriptor;
 import net.openid.appauth.browser.BrowserSelector;
 import net.openid.appauth.browser.CustomTabManager;
@@ -47,6 +44,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.Map;
+
+import static net.openid.appauth.Preconditions.checkNotNull;
 
 
 /**
@@ -236,12 +235,16 @@ public class AuthorizationService {
 
         Logger.debug("Initiating authorization request to %s",
                 request.configuration.authorizationEndpoint);
-        mContext.startActivity(AuthorizationManagementActivity.createStartIntent(
-                mContext,
-                request,
-                intent,
-                completedIntent,
-                canceledIntent));
+
+        Intent startIntent = AuthorizationManagementActivity.createStartIntent(
+            mContext,
+            request,
+            intent,
+            completedIntent,
+            canceledIntent);
+
+        startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(startIntent);
     }
 
     /**

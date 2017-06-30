@@ -181,6 +181,18 @@ public class AuthorizationServiceTest {
     }
 
     @Test
+    public void testAuthorizationRequest_intentFlagNewTask() throws Exception {
+        AuthorizationRequest request = getTestAuthRequestBuilder().build();
+        mService.performAuthorizationRequest(request, mPendingIntent);
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(mContext).startActivity(intentCaptor.capture());
+        Intent intent = intentCaptor.getValue();
+
+        assertThat((intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0).isTrue();
+    }
+
+    @Test
     public void testTokenRequest() throws Exception {
         InputStream is = new ByteArrayInputStream(AUTH_CODE_EXCHANGE_RESPONSE_JSON.getBytes());
         when(mHttpConnection.getInputStream()).thenReturn(is);
